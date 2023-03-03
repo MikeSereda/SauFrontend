@@ -1,0 +1,38 @@
+#home_main_container{
+    padding-top: 10px;
+    padding-right: 0;
+    padding-left: 0;
+    padding-bottom: 0;
+    margin-top: 10px;
+    /*display: flex;*/
+    /*flex-wrap: wrap;*/
+    /*justify-content: space-around;*/
+    background-color: #343841;
+}
+.home_content_container{
+ padding: 10px;
+}
+.home_content_container > h3{
+    margin-top: 0px;
+    margin-bottom: 20px;
+    color: #f3f3f3;
+    font-size: 40px;
+}
+.home_content_container > p{
+    color: #f3f3f3;
+    margin-left: 10px;
+}
+.phonebook_ul{
+    color: #f3f3f3;
+    margin-left: 10px;
+}
+.phonebook_ul > li {
+    display: block;
+    font-size: 22px;
+    margin-bottom: 15px;
+}
+
+.phonebook_ul > li >ul {
+    margin-top: 15px;
+    padding-left: 50px;
+}

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1">
+    <title>Главная страница</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/dashboard.css">
+    <link rel="stylesheet" href="styles/administration.css">
+    <link rel="stylesheet" href="styles/home.css">
+    <link rel="stylesheet" href="styles/content.css">
+    <script type="text/javascript" src="js/jquerry.js"></script>
+    <script type="text/javascript" src="js/Chart/dist/chart.js"></script>
+    <link rel="import" href="/fragments/home.html">
+</head>
+<body onload="addDelegation()">
+<div id="header_wrapper">
+    <div id="header">
+        <div id="header_left_part">
+            <img class="logo" src="styles/png/logo_station.png">
+            <p id="logo_text">SAT-AZ-UM APP</p>
+        </div>
+        <div id="header_right_part">
+            <div id="search_container">
+                Поиск...
+                <img src="styles/svg/search.svg" class="logo_svg" id="search_logo">
+            </div>
+            <div id="user_container" >
+                <img class="logo" src="styles/png/user_admin.png">
+                <div id="user_text">
+                    <p id="username">Наблюдатель</p>
+                    <p id="logout">(Неавторизован)</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<div id="menu_container">
+    <div class="main_menu_block">Главное меню</div>
+    <a>
+        <div class="secondary_menu_block" id="menu_button_home">
+            <img src="styles/svg/home.svg" class="logo_svg">
+            Главная страница
+        </div>
+    </a>
+    <a>
+        <div class="secondary_menu_block" id="menu_button_phones">
+            <img src="styles/svg/home.svg" class="logo_svg">
+            Телефоны
+        </div>
+    </a>
+    <a>
+        <div class="secondary_menu_block" id="menu_button_dashboard">
+            <img src="styles/svg/dashboard.svg" class="logo_svg">
+            Графики модемов
+        </div>
+    </a>
+    <a>
+        <div class="secondary_menu_block" id="menu_button_satParameters">
+            <img src="styles/svg/params.svg" class="logo_svg">
+            Параметры наведения
+        </div></a>
+    <a>
+        <div class="secondary_menu_block" id="menu_button_sessionsList">
+            <img src="styles/svg/recent.svg" class="logo_svg">
+            Спутниковые сеансы
+        </div></a>
+<!--    <a>-->
+<!--        <div class="secondary_menu_block" id="menu_button_administration">-->
+<!--            <img src="styles/svg/administration.svg" class="logo_svg">-->
+<!--            Администрирование-->
+<!--        </div>-->
+<!--    </a>-->
+    <div id="administration_block">
+        <div class="main_menu_block">Меню администратора</div>
+        <a>
+            <div class="secondary_menu_block" id="menu_button_userConfiguration">
+                <img src="styles/svg/users3.svg" class="logo_svg">
+                Управление
+            </div>
+        </a>
+        <a>
+            <div class="secondary_menu_block" id="menu_button_registerNewUser">
+                <img src="styles/svg/user_add.svg" class="logo_svg">
+                Регистрация пользователей
+            </div>
+        </a>
+        <a>
+            <div class="secondary_menu_block" id="menu_button_settings">
+                <img src="styles/svg/settings.svg" class="logo_svg">
+                Настройки
+            </div>
+        </a>
+        <a>
+            <div class="secondary_menu_block" id="menu_button_actionsLog">
+                <img src="styles/svg/watch.svg" class="logo_svg">
+                История действий
+            </div>
+        </a>
+    </div>
+</div>
+<div id="body">
+    <div id="body_right_part">
+        <div id="body_header">
+            <p id="body_header_text"></p>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="js/logging.js"></script>
+<script type="text/javascript" src="js/home.js"></script>
+<script type="text/javascript" src="js/phones.js"></script>
+<script type="text/javascript" src="js/dashboard.js"></script>
+<script type="text/javascript" src="js/editDevice.js"></script>
+<script type="text/javascript" src="js/administration.js"></script>
+<script type="text/javascript" src="js/index.js"></script>
+<script type="text/javascript" src="js/roles.js"></script>
+</body></html>
