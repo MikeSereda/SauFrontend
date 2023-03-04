@@ -119,6 +119,7 @@ var phones = function (){
 var dashboard = function (){
     clearBody("ГРАФИКИ");
     loadDashboardBody(); //dashboard.js
+    console.log("dashboards link executing");
 }
 
 var satParameters = function (){
