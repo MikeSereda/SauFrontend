@@ -1,31 +1,30 @@
 function roles_setup() {
     let roleField = document.getElementById("username");
     let actionFiled = document.getElementById("logout");
-    let roleText="Наблюдатель";
     let actionText="(Неавторизован)";
-    let roleLevel=sessionStorage.getItem('maxRoleLevel');
-    if (roleLevel<1000 && roleLevel>0){
-        admin_settings();
-        roleText="Администратор";
-        actionText="Выйти из аккаунта";
-
-    }
-    else{
-        if (roleLevel<2000 && roleLevel>=1000){
-            operator_settings();
-            roleText="Оператор";
-            actionText="Выйти из аккаунта";
+    if (sessionStorage.getItem('roles')){
+        roles = JSON.parse(sessionStorage.getItem('roles'));
+        let usernameBlock = document.getElementById("username");
+        document.getElementById("logout").innerText="(Неавторизован)"
+        let authorized = false;
+        if (roles.includes('OBSERVER')){
+            usernameBlock.innerText="Наблюдатель";
+            authorized = true;
         }
-        else{
-            if (roleLevel>=2000){
-                observer_settings();
-                roleText="Наблюдатель";
-                actionText="(Неавторизован)";
-            }
+        if (roles.includes('OPERATOR')){
+            usernameBlock.innerText="Оператор";
+            authorized = true;
         }
+        if (roles.includes('ADMIN')){
+            usernameBlock.innerText="Администратор";
+            authorized = true;
+        }
+        console.log(authorized);
+        if (authorized){
+            document.getElementById("logout").innerText="Выход"
+        }
+        usernameBlock.display="block";
     }
-    roleField.innerText=roleText;
-    actionFiled.innerText=actionText;
 }
 
 function admin_settings() {
