@@ -149,3 +149,29 @@ var checkRoles = function (roles){
         console.log(roles[i])
     }
 }
+
+function roles_setup() {
+    if (sessionStorage.getItem('roles')){
+        roles = JSON.parse(sessionStorage.getItem('roles'));
+        let usernameBlock = document.getElementById("username");
+        document.getElementById("logout").innerText="(Неавторизован)"
+        let authorized = false;
+        if (roles.includes('OBSERVER')){
+            usernameBlock.innerText="Наблюдатель";
+            authorized = true;
+        }
+        if (roles.includes('OPERATOR')){
+            usernameBlock.innerText="Оператор";
+            authorized = true;
+        }
+        if (roles.includes('ADMIN')){
+            usernameBlock.innerText="Администратор";
+            authorized = true;
+        }
+        console.log(authorized);
+        if (authorized){
+            document.getElementById("logout").innerText="Выход"
+        }
+        usernameBlock.display="block";
+    }
+}
