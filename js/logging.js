@@ -2,7 +2,6 @@ var mainLogging = function (){
     if (sessionStorage.getItem('currentToken')===undefined || sessionStorage.getItem('currentToken')===null){
         console.log('token storage is null, go to auth');
         loggingPage(null);
-
     }
     else{
         document.getElementById("menu_button_home").click();
@@ -61,14 +60,12 @@ var loggingPage = function (error){
     loggingContentContainer1.appendChild(loginButton);
     loggingMainContainer.appendChild(loggingContentContainer1);
     document.getElementById("body_right_part").appendChild(loggingMainContainer);
-    //await auth('admin','admin');
-    //console.log('logging is end.');
 }
 
 var logout = function (){
     if (sessionStorage.getItem('roles')){
         console.log('flushing token and roles.');
-        sessionStorage.clear()
+        sessionStorage.clear();
         let roleField = document.getElementById("username");
         let actionFiled = document.getElementById("logout");
         roleField.innerText = null;
@@ -83,27 +80,7 @@ var login = async function (){
     let passwordInputText = document.getElementById("password_input_box").value;
     let authResult = await auth(loginInputText,passwordInputText);
     if (authResult>=200 && authResult<300){
-        roles = JSON.parse(sessionStorage.getItem('roles'));
-        let usernameBlock = document.getElementById("username");
-        document.getElementById("logout").innerText="(Неавторизован)"
-        let authorized = false;
-        if (roles.includes('OBSERVER')){
-            usernameBlock.innerText="Наблюдатель";
-            authorized = true;
-        }
-        if (roles.includes('OPERATOR')){
-            usernameBlock.innerText="Оператор";
-            authorized = true;
-        }
-        if (roles.includes('ADMIN')){
-            usernameBlock.innerText="Администратор";
-            authorized = true;
-        }
-        console.log(authorized);
-        if (authorized){
-            document.getElementById("logout").innerText="Выход"
-        }
-        usernameBlock.display="block";
+        roles_setup();
         document.getElementById("menu_button_home").click();
     }
     else{
@@ -111,14 +88,12 @@ var login = async function (){
     }
 }
 
-var auth = async function (login,pass){
-    // const url = address+':'+port+apiVer+'auth/login';
+var auth = async function (login_name,password){
     const url = "http://localhost:7005/sauauth/api/v1/auth/authenticate"
     let authData = new Map;
-    authData.set('login',login);
-    authData.set('password',pass);
+    authData.set('login',login_name);
+    authData.set('password',password);
     try {
-        console.log('sending auth data');
         const response = await fetch(url, {
             method: 'POST',
             body: JSON.stringify(Object.fromEntries(authData)),//
@@ -127,12 +102,6 @@ var auth = async function (login,pass){
             }
         });
         const json = await response.json();
-        console.log(json.token);
-        console.log(json.roles);
-        console.log(json.permission.possibilities);
-        console.log(json.permission.menus);
-        // let roleArray = json.roles.split(':');
-        // roleArray = roleArray.slice(0,roleArray.length-1);
         sessionStorage.setItem('currentToken',json.token);
         sessionStorage.setItem('possibilities',JSON.stringify(json.permission.possibilities));
         sessionStorage.setItem('menus',JSON.stringify(json.permission.menus));
@@ -141,12 +110,6 @@ var auth = async function (login,pass){
     } catch (error) {
         console.error('Ошибка:', error);
         return error;
-    }
-}
-
-var checkRoles = function (roles){
-    for (let i=0;i<roles.length;i++){
-        console.log(roles[i])
     }
 }
 
@@ -168,7 +131,6 @@ function roles_setup() {
             usernameBlock.innerText="Администратор";
             authorized = true;
         }
-        console.log(authorized);
         if (authorized){
             document.getElementById("logout").innerText="Выход"
         }
