@@ -10,7 +10,7 @@ function loadHomeBody(){
 
     let homeContentContainer1Text = document.createElement("p");
     homeContentContainer1Text.className+="phonebook_ul"
-    getJSON(address+':'+port+apiVer+'greet',function(err, data) {
+    getJSON(greetLink,function(err, data) {
         if (err !== null) {
             console.log(err);
             if (err===401){
@@ -27,6 +27,7 @@ function loadHomeBody(){
             }
         }
         else {
+            console.log(data);
             homeContentContainer1Header.innerText=data.headerText;
             homeContentContainer1Text.innerText = data.bodyText;
             homeContentContainer1.appendChild(homeContentContainer1Header);

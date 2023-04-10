@@ -89,7 +89,7 @@ var login = async function (){
 }
 
 var auth = async function (login_name,password){
-    const url = "http://localhost:7005/sauauth/api/v1/auth/authenticate"
+    const url = authLink;
     let authData = new Map;
     authData.set('login',login_name);
     authData.set('password',password);

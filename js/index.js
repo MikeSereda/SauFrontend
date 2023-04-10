@@ -10,10 +10,52 @@ var newLimit = ((hours*3600) + (minutes*60) + (seconds/1))/(chartRefreshRate/100
 
 var getJSON = function(url, callback) {
     let token = sessionStorage.getItem('currentToken');
-    console.log(token);
+    // console.log(token);
     var xhr = new XMLHttpRequest();
     xhr.responseType = 'json';
     xhr.open('GET', url, true);
+    if (token!=null){
+        xhr.setRequestHeader('Authorization','Bearer ' + token);
+    }
+    xhr.onload = function() {
+        var status = xhr.status;
+        if (status === 200) {
+            callback(null, xhr.response);
+        } else {
+            alert("Ошибка соединения");
+            callback(status, xhr.response);
+        }
+    };
+    xhr.send();
+}
+
+var postJSON = function(url, body, callback) {
+    let token = sessionStorage.getItem('currentToken');
+    // console.log(token);
+    var xhr = new XMLHttpRequest();
+    // let bodyText = JSON.stringify(body);
+    xhr.responseType = 'json';
+    xhr.open('POST', url, true);
+    if (token!=null){
+        xhr.setRequestHeader('Authorization','Bearer ' + token);
+    }
+    xhr.setRequestHeader('Content-type', 'application/json; charset=utf-8');
+    xhr.onload = function() {
+        var status = xhr.status;
+        if (status === 200) {
+            callback(null, xhr.response);
+        } else {
+            alert("Ошибка соединения");
+            callback(status, xhr.response);
+        }
+    };
+    xhr.send(body);
+}
+
+var syncGetRequest = function(url, callback) {
+    let token = sessionStorage.getItem('currentToken');
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', url, false);
     if (token!=null){
         xhr.setRequestHeader('Authorization','Bearer ' + token);
     }
@@ -48,7 +90,7 @@ var getTextRequest = function(url, token, callback) {
 }
 
 var clearBody = function (caption) {
-    clearInterval(modemRefreshingLoopFunctionId);
+    cancelUpdating();
     document.getElementById("body_header_text").innerText=caption.toUpperCase();
     if (document.getElementById("body_right_part").lastChild.id!="body_header"){
         document.getElementById("body_right_part").lastChild.remove();
@@ -113,7 +155,7 @@ var home = function (){
 
 var phones = function (){
     clearBody("ТЕЛЕФОНЫ");
-    loadPhoneBody(); //phones.js
+    loadPhoneBody();//phones.js
 }
 
 var dashboard = function (){
@@ -128,6 +170,7 @@ var satParameters = function (){
 }
 var sessionsList = function (){
     clearBody("Спутниковые сеансы");
+    loadSessionsBody();
     console.log("sessionsList link executing");
 }
 // var administration = function (){

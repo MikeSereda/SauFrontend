@@ -10,7 +10,7 @@ function loadPhoneBody(){
 
     let homeContentContainer1Text = document.createElement("ul");
     homeContentContainer1Text.className+="phonebook_ul"
-    getJSON(address+':'+port+apiVer+'phones',function(err, data) {
+    getJSON(phonesLink,function(err, data) {
         if (err !== null) {
             console.log(err);
             if (err===401){
@@ -27,13 +27,14 @@ function loadPhoneBody(){
             }
         }
         else {
+            console.log(data);
             for (let i=0;i<data.length;i++){
                 let li = document.createElement("li");
                 li.innerText = data[i].city+' - '+data[i].cityCode;
                 let innerUl = document.createElement("ul");
                 for (let j=0;j<Object.keys(data[i].subscribers).length;j++){
                     let key = Object.keys(data[i].subscribers)[j];
-                    let value = data[i].subscribers[key]
+                    let value = data[i].subscribers[key];
                     let li1 = document.createElement("li");
                     li1.innerText = key+ ' - ' +value;
                     innerUl.appendChild(li1);
@@ -48,5 +49,4 @@ function loadPhoneBody(){
         }
     });
     // homeContentContainer1Text.innerText="";
-
 }

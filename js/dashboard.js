@@ -1,15 +1,63 @@
 var modemList;
 var modemsData;
-var dashboardCanvases;
 var modemRefreshingLoopFunctionId;
 var limit = 600;
-var chartData;
-var ebNo;
-var ebNoRemote;
 var timestamp;
-var loadedDataCount;
 var charts;
-var lastRefreshedData;
+var timers = new Array();
+
+class deviceParams {
+    _ebNoArray = new Array();
+    _ebNoRemoteArray = new Array();
+    _timestampArray = new Array();
+    _deviceId;
+
+    _chart;
+    constructor(deviceId) {
+        this._deviceId = deviceId;
+    }
+
+    get deviceId() {
+        return this._deviceId;
+    }
+
+    set ebNoArray(array){
+        this._ebNoArray = array;
+    }
+
+    set ebNoRemoteArray(value) {
+        this._ebNoRemoteArray = value;
+    }
+
+    set timestampArray(value) {
+        this._timestampArray = value;
+    }
+
+
+    get ebNoArray() {
+        return this._ebNoArray;
+    }
+
+    get ebNoRemoteArray() {
+        return this._ebNoRemoteArray;
+    }
+
+    get timestampArray() {
+        return this._timestampArray;
+    }
+
+
+    get chart() {
+        return this._chart;
+    }
+
+    set chart(value) {
+        this._chart = value;
+    }
+}
+
+var deviceParamsMap = new Map();
+
 var chartOptions = {
     responsive: true,
     animation: {
@@ -34,8 +82,8 @@ var chartOptions = {
                     y: 100
                 }
             },
-            min: 0,
-            max: 9
+            min: -2,
+            max: 17
         },
         x: {
             display: false
@@ -44,18 +92,11 @@ var chartOptions = {
 };
 
 var loadDashboardBody = function (){
-    modemList = new Array();
-    dashboardCanvases = new Array();
-    chartData = new Array();
-    ebNo = new Array();
-    ebNoRemote = new Array();
-    timestamp = new Array();
-    loadedDataCount = 0;
-    charts = new Array();
-    getJSON(address+':'+port+apiVer+'devices',null,function(err, data) {
+    getJSON(devicesLink,function(err, data) {
         if (err !== null) {
             console.log(err);
         } else {
+            // data = JSON.parse(oldData);
             modemsData = data;
             var dashboardContainer = document.createElement("div");
             dashboardContainer.id="modem_dashboard_container";
@@ -72,6 +113,14 @@ var loadDashboardBody = function (){
                 dashboard.appendChild(dashboardCanvas);
                 dashboard.appendChild(modemCaption);
                 dashboardContainer.appendChild(dashboard);
+                deviceParamsMap.set(data[i].id, new deviceParams(data[i].id));
+                // chartDataInit();
+                getJSON(parametersLink + '?deviceId=' + data[i].id+'&limit=7200',function (err2,params){
+                    if (err2 !== null)
+                        console.log(err2);
+                    else
+                        parametersExplain(data[i].id, params);
+                });
             }
             for (let i=0;i<3;i++){
                 let dashboardGhost = document.createElement("div");
@@ -80,141 +129,104 @@ var loadDashboardBody = function (){
                 dashboardContainer.appendChild(dashboardGhost);
             }
             document.getElementById("body_right_part").appendChild(dashboardContainer);
-            dashboardsRefreshingFunction(data);
         }
     });
 }
 
-var dashboardsRefreshingFunction = function (
-    // baseLoadData
-){
-    let hour = 1000*60*60;
-    let twoHoursAgo = Date.now()+hour;
-    var date = new Date(twoHoursAgo);
-    var dateTwoHoursAgo = date.toISOString().split('.')[0];
-    console.log(dateTwoHoursAgo);
-    var keys;
+var parametersExplain = function (devId, parameterText){
+    let parameterMap = new Map(Object.entries(parameterText)).get(devId);
+    for (let i=0; i<parameterMap.length; i++){
+        let valueSet = new Map(Object.entries(parameterMap[i])).get('values');
+        // console.log(valueSet);
+        deviceParamsMap.get(devId)._ebNoArray.push(valueSet.eb_no);
+        deviceParamsMap.get(devId)._ebNoRemoteArray.push(valueSet.eb_no_remote);
+        deviceParamsMap.get(devId)._timestampArray.push(valueSet.timestamp_wotz);
+    }
+    chartDraw(deviceParamsMap.get(devId));
+}
 
-    getJSON(address + ':' + port + apiVer + 'updates',
-        null,
-        function (err, deviceParamMap) {
-            if (err !== null) {
-                console.log(err);
-            } else {
-                keys = Object.keys(deviceParamMap);
-                for (let device in deviceParamMap) {
-                    modemList.push(device);
-                    dashboardCanvases.push(document.getElementById("chart_"+device).getContext("2d"));
-                    let ebNoCommon = new Array();
-                    let ebNoRemoteCommon = new Array();
-                    let timestampCommon = new Array();
-                    for (let i=0; i<deviceParamMap[device].length;i++){
-                        ebNoCommon.push(deviceParamMap[device][i].ebNo);
-                        ebNoRemoteCommon.push(deviceParamMap[device][i].ebNoRemote);
-                        timestampCommon.push(deviceParamMap[device][i].timestampWotz);
-                    }
-                    ebNo.push(ebNoCommon);
-                    ebNoRemote.push(ebNoRemoteCommon);
-                    timestamp.push(timestampCommon);
-                }
-                chartDataInit();
+var chartDraw = function (deviceParamsSet) {
+    let canvasId = 'chart_'+deviceParamsSet._deviceId;
+    let chartDataCommon = {
+        setname : "",
+        labels: deviceParamsSet._timestampArray,
+        datasets: [
+            {
+                label: "Eb/No",
+                // borderColor: 'red',
+                fill: false,
+                backgroundColor: "rgba(255,99,132,0.2)",
+                borderColor: "rgba(255,99,132,1)",
+                hoverBackgroundColor: "rgba(255,99,132,0.4)",
+                hoverBorderColor: "rgba(255,99,132,1)",
+                borderWidth: 1.5,
+                tension: 0.5,
+                pointHitRadius: 10,
+                pointRadius: 0.5,
+                showLine: true,
+                spanGaps: true,
+                data: deviceParamsSet._ebNoArray
+            },
+            {
+                label: "Eb/No Remote",
+                backgroundColor: "rgba(0,72,255,0.2)",
+                borderColor: "rgba(0,72,255,1)",
+                hoverBackgroundColor: "rgba(0,72,255,0.4)",
+                hoverBorderColor: "rgba(0,72,255,1)",
+                fill: true,
+                pointHitRadius: 10,
+                borderWidth: 1,
+                spanGaps: false,
+                tension: 0.5,
+                pointRadius: 1,
+                data: deviceParamsSet._ebNoRemoteArray
             }
-        });
+        ]
+    }
+    deviceParamsSet._chart = new Chart(canvasId, {
+        type: 'line',
+        data: chartDataCommon,
+        options: chartOptions
+    });
+    timers.push(setInterval(() => updatingParams(deviceParamsSet), 10000));
 }
 
-var chartDataInit = async function (){
-    for (let i=0;i<ebNo.length;i++){
-        var chartDataCommon = {
-            setname : "",
-            labels: timestamp[i],
-            datasets: [
-                {
-                    label: "Eb/No"+i,
-                    borderColor: 'blue',
-                    fill: false,
-                    backgroundColor: "rgba(255,99,132,0.2)",
-                    borderColor: "rgba(255,99,132,1)",
-                    hoverBackgroundColor: "rgba(255,99,132,0.4)",
-                    hoverBorderColor: "rgba(255,99,132,1)",
-                    borderWidth: 1.5,
-                    tension: 0.5,
-                    pointHitRadius: 10,
-                    pointRadius: 0.5,
-                    showLine: true,
-                    spanGaps: true,
-                    data: ebNo[i]
-                },
-                {
-                    label: "Eb/No Remote",
-                    borderColor: 'red',
-                    fill: true,
-                    pointHitRadius: 10,
-                    borderWidth: 1,
-                    spanGaps: false,
-                    tension: 0.5,
-                    pointRadius: 1,
-                    data: ebNoRemote[i]
-                }
-            ]
-        };
-        chartData.push(chartDataCommon);
-    }
-    chartsInit();
-}
-
-var chartsInit = function (){
-    for (let i=0;i<dashboardCanvases.length;i++){
-        charts.push(
-            new Chart(dashboardCanvases[i], {
-                type: 'line',
-                data: chartData[i],
-                options: chartOptions
-            })
-        );
-    }
-    modemRefreshingLoopFunctionId = setInterval(chartRefreshing,chartRefreshRate);
-}
-
-
-
-var chartRefreshing = async function (){
-    const url = address+':'+port+apiVer+'updates?reduced=true&limit='+newLimit;
-    lastRefreshedData = new Map;
-    for (let i=0;i<modemList.length;i++){
-        lastRefreshedData.set(modemList[i],timestamp[i][timestamp[i].length-2].replace(' ','T'));
-    }
-    // console.log(JSON.stringify(Object.fromEntries(lastRefreshedData)));
-    try {
-        const response = await fetch(url, {
-            method: 'POST',
-            body: JSON.stringify(Object.fromEntries(lastRefreshedData)),
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
-        const json = await response.json();
-        let keys = Object.keys(json);
-        // console.log(json);
-        for (let object in json) {
-            // console.log(object);
-            let index = modemList.indexOf(object);
-            // console.log(json[object].length);
-            if (json[object].length>0){
-                ebNo[index].shift();
-                ebNoRemote[index].shift();
-                timestamp[index].shift();
-                ebNo[index].push(object.ebNo);
-                ebNoRemote[index].push(object.ebNoRemote);
-                timestamp[index].push(object.timestampWotz);
+var updatingParams = function (deviceParamsSet) {
+    let responseBody = new Map();
+    let lastUpTime = deviceParamsSet._timestampArray[deviceParamsSet._timestampArray.length-1];
+    responseBody.set(deviceParamsSet._deviceId,lastUpTime);
+    let responseBodyJson = JSON.stringify(Object.fromEntries(responseBody));
+    postJSON(updatesLink,responseBodyJson,function (err,response) {
+        if (err !== null)
+            console.log(err);
+        else{
+            if (response!==null && response!==undefined){
+                chartRefresh(deviceParamsSet, response);
             }
         }
-        for (let i=0;i<charts.length;i++){
-            charts[i].data.labels = timestamp[i];
-            charts[i].data.datasets[0].data = ebNo[i];
-            charts[i].data.datasets[1].data = ebNoRemote[i];
-            charts[i].update();
+    });
+}
+
+var chartRefresh = function (deviceParamsSet, response) {
+    let devId = deviceParamsSet._deviceId;
+    let parameterMap = new Map(Object.entries(response)).get(devId);
+    for (let i=0; i<parameterMap.length; i++){
+        let valueSet = new Map(Object.entries(parameterMap[i])).get('values');
+        if (!(deviceParamsMap.get(devId)._timestampArray[deviceParamsSet._timestampArray.length-1]===valueSet.timestamp_wotz)){
+            deviceParamsMap.get(devId)._ebNoArray.push(valueSet.eb_no);
+            deviceParamsMap.get(devId)._ebNoRemoteArray.push(valueSet.eb_no_remote);
+            deviceParamsMap.get(devId)._timestampArray.push(valueSet.timestamp_wotz);
+
+            deviceParamsMap.get(devId)._ebNoArray.shift();
+            deviceParamsMap.get(devId)._ebNoRemoteArray.shift();
+            deviceParamsMap.get(devId)._timestampArray.shift();
         }
-    } catch (error) {
-        console.error('Ошибка:', error);
+    }
+    deviceParamsMap.get(devId)._chart.update();
+}
+
+var cancelUpdating = function (){
+    for (let i=0;i<timers.length;i++){
+        clearInterval(timers[i]);
     }
 }
