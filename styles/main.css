@@ -3,6 +3,10 @@ body{
     margin: 0;
     background-color: #2d3039;
     min-width: 850px;
+
+}
+::-webkit-scrollbar{
+    width: 0;
 }
 #header_wrapper{
     height: 70px;

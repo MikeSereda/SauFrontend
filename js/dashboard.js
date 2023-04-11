@@ -59,10 +59,9 @@ class deviceParams {
 var deviceParamsMap = new Map();
 
 var chartOptions = {
+    spanGaps: true,
     responsive: true,
-    animation: {
-        duration: 0
-    },
+    animation: false,
     legend: {
         display: true,
         backgroundColor: (255,255,255),
@@ -79,11 +78,11 @@ var chartOptions = {
                 align: 'end',
                 text: 'dB',
                 padding: {
-                    y: 100
+                    y: 0
                 }
             },
-            min: -2,
-            max: 17
+            min: -1,
+            max: 16
         },
         x: {
             display: false
@@ -115,19 +114,19 @@ var loadDashboardBody = function (){
                 dashboardContainer.appendChild(dashboard);
                 deviceParamsMap.set(data[i].id, new deviceParams(data[i].id));
                 // chartDataInit();
-                getJSON(parametersLink + '?deviceId=' + data[i].id+'&limit=7200',function (err2,params){
+                getJSON(parametersLink + '?deviceId=' + data[i].id,function (err2,params){
                     if (err2 !== null)
                         console.log(err2);
                     else
                         parametersExplain(data[i].id, params);
                 });
             }
-            for (let i=0;i<3;i++){
-                let dashboardGhost = document.createElement("div");
-                dashboardGhost.className+="modem_dashboard ";
-                dashboardGhost.className+="ghost ";
-                dashboardContainer.appendChild(dashboardGhost);
-            }
+            // for (let i=0;i<3;i++){
+            //     let dashboardGhost = document.createElement("div");
+            //     dashboardGhost.className+="modem_dashboard ";
+            //     dashboardGhost.className+="ghost ";
+            //     dashboardContainer.appendChild(dashboardGhost);
+            // }
             document.getElementById("body_right_part").appendChild(dashboardContainer);
         }
     });
@@ -140,7 +139,7 @@ var parametersExplain = function (devId, parameterText){
         // console.log(valueSet);
         deviceParamsMap.get(devId)._ebNoArray.push(valueSet.eb_no);
         deviceParamsMap.get(devId)._ebNoRemoteArray.push(valueSet.eb_no_remote);
-        deviceParamsMap.get(devId)._timestampArray.push(valueSet.timestamp_wotz);
+        deviceParamsMap.get(devId)._timestampArray.push(valueSet.timestamp_wotz.replace('T', ' '));
     }
     chartDraw(deviceParamsMap.get(devId));
 }
@@ -154,7 +153,7 @@ var chartDraw = function (deviceParamsSet) {
             {
                 label: "Eb/No",
                 // borderColor: 'red',
-                fill: false,
+                fill: true,
                 backgroundColor: "rgba(255,99,132,0.2)",
                 borderColor: "rgba(255,99,132,1)",
                 hoverBackgroundColor: "rgba(255,99,132,0.4)",
@@ -162,7 +161,7 @@ var chartDraw = function (deviceParamsSet) {
                 borderWidth: 1.5,
                 tension: 0.5,
                 pointHitRadius: 10,
-                pointRadius: 0.5,
+                pointRadius: 0,
                 showLine: true,
                 spanGaps: true,
                 data: deviceParamsSet._ebNoArray
@@ -176,9 +175,9 @@ var chartDraw = function (deviceParamsSet) {
                 fill: true,
                 pointHitRadius: 10,
                 borderWidth: 1,
-                spanGaps: false,
+                spanGaps: true,
                 tension: 0.5,
-                pointRadius: 1,
+                pointRadius: 0,
                 data: deviceParamsSet._ebNoRemoteArray
             }
         ]
@@ -188,13 +187,13 @@ var chartDraw = function (deviceParamsSet) {
         data: chartDataCommon,
         options: chartOptions
     });
-    timers.push(setInterval(() => updatingParams(deviceParamsSet), 10000));
+    timers.push(setInterval(() => updatingParams(deviceParamsSet), 2000));
 }
 
 var updatingParams = function (deviceParamsSet) {
     let responseBody = new Map();
     let lastUpTime = deviceParamsSet._timestampArray[deviceParamsSet._timestampArray.length-1];
-    responseBody.set(deviceParamsSet._deviceId,lastUpTime);
+    responseBody.set(deviceParamsSet._deviceId,lastUpTime.replace(' ', 'T'));
     let responseBodyJson = JSON.stringify(Object.fromEntries(responseBody));
     postJSON(updatesLink,responseBodyJson,function (err,response) {
         if (err !== null)
@@ -212,10 +211,10 @@ var chartRefresh = function (deviceParamsSet, response) {
     let parameterMap = new Map(Object.entries(response)).get(devId);
     for (let i=0; i<parameterMap.length; i++){
         let valueSet = new Map(Object.entries(parameterMap[i])).get('values');
-        if (!(deviceParamsMap.get(devId)._timestampArray[deviceParamsSet._timestampArray.length-1]===valueSet.timestamp_wotz)){
+        if (!(deviceParamsMap.get(devId)._timestampArray[deviceParamsSet._timestampArray.length-1]===valueSet.timestamp_wotz.replace('T', ' '))){
             deviceParamsMap.get(devId)._ebNoArray.push(valueSet.eb_no);
             deviceParamsMap.get(devId)._ebNoRemoteArray.push(valueSet.eb_no_remote);
-            deviceParamsMap.get(devId)._timestampArray.push(valueSet.timestamp_wotz);
+            deviceParamsMap.get(devId)._timestampArray.push(valueSet.timestamp_wotz.replace('T', ' '));
 
             deviceParamsMap.get(devId)._ebNoArray.shift();
             deviceParamsMap.get(devId)._ebNoRemoteArray.shift();
