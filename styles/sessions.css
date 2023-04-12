@@ -1,0 +1,43 @@
+.sessions_selection_block{
+    display: flex;
+    flex-direction: row;
+    margin-top: 0;
+    padding-left: 5px;
+    padding-bottom: 5px;
+}
+#sessions_container{
+    margin-top: 10px;
+
+}
+.session{
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 5px;
+}
+
+.session > div {
+    margin-left: 10px;
+}
+
+.session_device{
+}
+
+.session_time{
+
+}
+
+.session_duration{
+
+}
+.planned{
+    background-color: #e5e5e5;
+}
+.unplanned{
+    background-color: #e06970;
+}
+.between_centre{
+    background-color: #f3f3f3;
+}
+.asdp{
+    background-color: #cbcbcb;
+}

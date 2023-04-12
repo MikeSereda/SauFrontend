@@ -6,7 +6,7 @@ function loadPhoneBody(){
     homeContentContainer1.className+="home_content_container ";
 
     let homeContentContainer1Header = document.createElement("h3");
-    homeContentContainer1Header.innerText="Временная страница телефонных номеров";
+    homeContentContainer1Header.innerText="Список телефонных номеров";
 
     let homeContentContainer1Text = document.createElement("ul");
     homeContentContainer1Text.className+="phonebook_ul"

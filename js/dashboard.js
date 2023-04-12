@@ -74,14 +74,14 @@ var chartOptions = {
     scales:{
         y: {
             title: {
-                display: false,
+                display: true,
                 align: 'end',
                 text: 'dB',
                 padding: {
                     y: 0
                 }
             },
-            min: -1,
+            min: -2,
             max: 16
         },
         x: {
@@ -121,12 +121,12 @@ var loadDashboardBody = function (){
                         parametersExplain(data[i].id, params);
                 });
             }
-            // for (let i=0;i<3;i++){
-            //     let dashboardGhost = document.createElement("div");
-            //     dashboardGhost.className+="modem_dashboard ";
-            //     dashboardGhost.className+="ghost ";
-            //     dashboardContainer.appendChild(dashboardGhost);
-            // }
+            for (let i=0;i<3;i++){
+                let dashboardGhost = document.createElement("div");
+                dashboardGhost.className+="modem_dashboard ";
+                dashboardGhost.className+="ghost ";
+                dashboardContainer.appendChild(dashboardGhost);
+            }
             document.getElementById("body_right_part").appendChild(dashboardContainer);
         }
     });
@@ -151,15 +151,15 @@ var chartDraw = function (deviceParamsSet) {
         labels: deviceParamsSet._timestampArray,
         datasets: [
             {
+                order: 1,
                 label: "Eb/No",
-                // borderColor: 'red',
                 fill: true,
-                backgroundColor: "rgba(255,99,132,0.2)",
-                borderColor: "rgba(255,99,132,1)",
-                hoverBackgroundColor: "rgba(255,99,132,0.4)",
+                backgroundColor: "rgba(255,99,132,0.3)",
+                hoverBackgroundColor: "rgba(255,99,132,1)",
+                borderColor: "rgba(255,99,132,0.8)",
                 hoverBorderColor: "rgba(255,99,132,1)",
-                borderWidth: 1.5,
-                tension: 0.5,
+                borderWidth: 0,
+                tension: 1,
                 pointHitRadius: 10,
                 pointRadius: 0,
                 showLine: true,
@@ -167,16 +167,18 @@ var chartDraw = function (deviceParamsSet) {
                 data: deviceParamsSet._ebNoArray
             },
             {
+                order: 2,
+                z: 2,
                 label: "Eb/No Remote",
-                backgroundColor: "rgba(0,72,255,0.2)",
-                borderColor: "rgba(0,72,255,1)",
-                hoverBackgroundColor: "rgba(0,72,255,0.4)",
+                backgroundColor: "rgba(0,72,255,0.3)",
+                hoverBackgroundColor: "rgba(0,72,255,1)",
+                borderColor: "rgba(0,72,255,0.8)",
                 hoverBorderColor: "rgba(0,72,255,1)",
                 fill: true,
                 pointHitRadius: 10,
-                borderWidth: 1,
+                borderWidth: 0,
                 spanGaps: true,
-                tension: 0.5,
+                tension: 1,
                 pointRadius: 0,
                 data: deviceParamsSet._ebNoRemoteArray
             }
@@ -187,7 +189,7 @@ var chartDraw = function (deviceParamsSet) {
         data: chartDataCommon,
         options: chartOptions
     });
-    timers.push(setInterval(() => updatingParams(deviceParamsSet), 2000));
+    timers.push(setInterval(() => updatingParams(deviceParamsSet), 1000));
 }
 
 var updatingParams = function (deviceParamsSet) {

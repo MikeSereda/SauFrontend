@@ -10,7 +10,8 @@
     background-color: #343841;
 }
 .home_content_container{
- padding: 10px;
+    padding: 10px 10px 2px;
+    margin-bottom: 10px;
 }
 .home_content_container > h3{
     margin-top: 0px;
@@ -25,6 +26,7 @@
 .phonebook_ul{
     color: #f3f3f3;
     margin-left: 10px;
+    margin-bottom: 0;
 }
 .phonebook_ul > li {
     display: block;

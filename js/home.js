@@ -27,7 +27,7 @@ function loadHomeBody(){
             }
         }
         else {
-            console.log(data);
+            // console.log(data);
             homeContentContainer1Header.innerText=data.headerText;
             homeContentContainer1Text.innerText = data.bodyText;
             homeContentContainer1.appendChild(homeContentContainer1Header);
