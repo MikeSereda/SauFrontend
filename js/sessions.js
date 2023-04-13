@@ -38,7 +38,6 @@ var loadSessionsBody = function (){var homeMainContainer = document.createElemen
                 option.value=data[i].id;
                 option.innerHTML=data[i].name;
                 deviceMap.set(data[i].id,data[i].name);
-                console.log(deviceMap.get(data[i].id));
                 devicePicker.appendChild(option);
             }
         }

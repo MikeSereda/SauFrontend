@@ -118,11 +118,14 @@ function addDelegation(){
                 case "dashboard" :
                     dashboard();
                     break;
-                case "satParameters" :
-                    satParameters();
+                case "geoParameters" :
+                    geoParameters();
                     break;
                 case "sessionsList" :
                     sessionsList();
+                    break;
+                case "parameters" :
+                    satParameters();
                     break;
                 case "administration" :
                     administration();
@@ -164,14 +167,19 @@ var dashboard = function (){
     console.log("dashboards link executing");
 }
 
-var satParameters = function (){
+var geoParameters = function (){
     clearBody("Параметры наведения");
-    console.log("satParameters link executing");
+    console.log("geoParameters link executing");
 }
 var sessionsList = function (){
     clearBody("Спутниковые сеансы");
     loadSessionsBody();
     console.log("sessionsList link executing");
+}
+var satParameters = function (){
+    clearBody("Подробная информация");
+    loadSatParametersBody();
+    console.log("satParameters link executing");
 }
 // var administration = function (){
 //     clearBody("администрирование");
