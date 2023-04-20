@@ -58,37 +58,6 @@ class deviceParams {
 
 var deviceParamsMap = new Map();
 
-var chartOptions = {
-    spanGaps: true,
-    responsive: true,
-    animation: false,
-    legend: {
-        display: true,
-        backgroundColor: (255,255,255),
-        position: 'top',
-        labels: {
-            boxWidth: 40,
-            fontColor: 'white'
-        }
-    },
-    scales:{
-        y: {
-            title: {
-                display: true,
-                align: 'end',
-                text: 'dB',
-                padding: {
-                    y: 0
-                }
-            },
-            min: -2,
-            max: 16
-        },
-        x: {
-            display: false
-        }
-    }
-};
 
 var loadDashboardBody = function (){
     getJSON(devicesLink,function(err, data) {
@@ -114,7 +83,7 @@ var loadDashboardBody = function (){
                 dashboardContainer.appendChild(dashboard);
                 deviceParamsMap.set(data[i].id, new deviceParams(data[i].id));
                 // chartDataInit();
-                getJSON(parametersLink + '?deviceId=' + data[i].id,function (err2,params){
+                getJSON(parametersLink + '?deviceId=' + data[i].id+'&limit=4000',function (err2,params){
                     if (err2 !== null)
                         console.log(err2);
                     else
@@ -184,12 +153,46 @@ var chartDraw = function (deviceParamsSet) {
             }
         ]
     }
-    deviceParamsSet._chart = new Chart(canvasId, {
-        type: 'line',
-        data: chartDataCommon,
-        options: chartOptions
-    });
-    timers.push(setInterval(() => updatingParams(deviceParamsSet), 1000));
+
+    let chartOptions = {
+        spanGaps: true,
+        responsive: true,
+        animation: false,
+        legend: {
+            display: true,
+            backgroundColor: (255,255,255),
+            position: 'top',
+            labels: {
+                boxWidth: 40,
+                fontColor: 'white'
+            }
+        },
+        scales:{
+            y: {
+                title: {
+                    display: true,
+                    align: 'end',
+                    text: 'dB',
+                    padding: {
+                        y: 0
+                    }
+                },
+                min: -2,
+                max: 16
+            },
+            x: {
+                display: false
+            }
+        }
+    };
+    if (document.getElementById(canvasId)){
+        deviceParamsSet._chart = new Chart(canvasId, {
+            type: 'line',
+            data: chartDataCommon,
+            options: chartOptions
+        });
+        timers.push(setInterval(() => updatingParams(deviceParamsSet), 1000));
+    }
 }
 
 var updatingParams = function (deviceParamsSet) {

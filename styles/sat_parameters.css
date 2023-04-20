@@ -1,0 +1,44 @@
+#parameters_container{
+    padding-top: 10px;
+    padding-right: 0;
+    padding-left: 0;
+    padding-bottom: 0;
+    /*flex-direction: column;*/
+}
+.params_dashboard{
+    /*height: 380px;*/
+    margin-top: 0;
+    margin-right: 0;
+    margin-left: 0;
+    margin-bottom: 5px;
+    opacity: 100%;
+    display: flex;
+}
+.params_dashboard:hover{
+    opacity: 100%;
+}
+.params_canvas{
+    background-color: #343841;
+    /*flex: 1;*/
+    width: 90%;
+    height: 100%;
+    /*max-height: 350px;*/
+    margin-bottom: 0;
+}
+#startTimePicker{
+    margin-right: 10px;
+}
+#endTimePicker{
+    margin-right: 10px;
+}
+#devicePicker{
+    margin-right: 10px;
+}
+#paramsPicker{
+    display: block;
+    margin-top: 10px;
+    margin-left: 10px;
+}
+#paramsPicker option:checked{
+    background-color: rebeccapurple;
+}

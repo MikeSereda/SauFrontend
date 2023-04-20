@@ -70,15 +70,13 @@ var loadSessionsBody = function (){var homeMainContainer = document.createElemen
 var baseSessions = function (deviceId, startTime, endTime) {
     let sessionsContainer = document.getElementById("sessions_container");
     sessionsContainer.innerHTML='';
-    console.log("startTime "+startTime);
-    console.log("endTime "+endTime);
-    console.log(sessionsLink+"?deviceId="+deviceId+"&startTime="+startTime+"&endTime="+endTime);
+    // console.log(sessionsLink+"?deviceId="+deviceId+"&startTime="+startTime+"&endTime="+endTime);
     getJSON(sessionsLink+"?deviceId="+deviceId+"&startTime="+startTime+"&endTime="+endTime,function(err, data) {
         if (err !== null) {
             console.log(err);
         } else {
 
-            console.log(data);
+            // console.log(data);
             for (let i=0; i<data.length;i++){
                 let session = document.createElement("div");
                 session.className+="session ";
@@ -115,8 +113,9 @@ var baseSessions = function (deviceId, startTime, endTime) {
                 session.appendChild(endTimeBlock);
                 session.appendChild(durationBlock);
                 session.appendChild(deviceBlock);
-
-                sessionsContainer.appendChild(session);
+                if (sessionsContainer){
+                    sessionsContainer.appendChild(session);
+                }
             }
         }
     });
